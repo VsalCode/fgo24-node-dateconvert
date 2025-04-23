@@ -10,7 +10,7 @@ const rl = readline.createInterface({
 DENGAN PACKAGE
 --------------------------------------------- */
 
-const firstMenu =  () => {
+const firstMenu = async () => {
   console.clear();
   console.log(`
     ========================================
@@ -19,53 +19,57 @@ const firstMenu =  () => {
     |        format harus DD-MM-YYY        |
     ========================================
   `);
-  rl.question("masukkan angka: ", function(input) {
-    if(moment(input, "DD-MM-YYYY").isValid()){
-      const result = moment(input, "DD-MM-YYYY").format("DD/MM/YYYY");
+    try{
+    const question = await rl.question("masukkan angka: ")
+
+    
+    if(moment(question, "DD-MM-YYYY").isValid()){
+      const result = moment(question, "DD-MM-YYYY").format("DD/MM/YYYY");
       console.log(result);
-    }else if(moment(input, "DD-MM-YYYY").isValid()){
-      const error = new Error("invalid_format");
-      throw error;
+    }else if(!moment(question, "DD-MM-YYYY").isValid()){
+      const error = new Error("wrong_format")
+      throw error
+    }else{
+      const error = new Error("not_valid")
+      throw error
     }
-    else{
-      const error = new Error("invalid_input");
-      throw error;
+
+  }catch(err){
+    if(err.message === "wrong_format"){
+      console.log("tanggal yang dimasukkan salah format");
     }
-  });
+    if(err.message === "not_valid"){
+      console.log("input tidak valid");
+    }
+  }
 };
 
-try {
-  firstMenu();
-} catch (error) {
-  if(error.message === "invalid_input"){
-    console.log("Input tidak Valid !");
-  }
-}
 
+firstMenu();
 
 /* --------------------------------------------- 
 TANPA PACKAGE
 --------------------------------------------- */
 
-// function firstMenuWithoutPackage() {
-//   console.log(`
-//     ========================================
-//     |   # Program konversi ke DD/MM/YYY #  |
-//     |--------------------------------------|
-//     |        format harus DD-MM-YYY        |
-//     ========================================
-//   `);
-//   rl.question("masukkan angka: ", function (input) {
-//     const pisah = input.split("-");
-//     // console.log(pisah);
+function firstMenuWithoutPackage() {
+  console.log(`
+    ========================================
+    |   # Program konversi ke DD/MM/YYY #  |
+    |--------------------------------------|
+    |        format harus DD-MM-YYY        |
+    ========================================
+  `);
+  rl.question("masukkan angka: ", function (input) {
+    const pisah = input.split("-"); 
+    // console.log(pisah);
   
-//     if(pisah.length <= 1){
-//       console.log("Format Tanggal Anda Salah");
-//     }else{
-//       const result = pisah.join("/");
-//       console.log(result);
-//     }   
-//   });
-// }
+    if(pisah.length <= 1 || typeof pisah.length !== "number" ){
+      console.log("Format Tanggal Anda Salah");
+    }else{
+      const result = pisah.join("/");
+      console.log(result);
+    }   
+  });
+}
 
-// firstMenuWithoutPackage();
+firstMenuWithoutPackage();
