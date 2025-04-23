@@ -19,29 +19,24 @@ const firstMenu = async () => {
     |        format harus DD-MM-YYY        |
     ========================================
   `);
-    try{
-    const question = await rl.question("masukkan angka: ")
+  try {
+    const question = await rl.question("masukkan angka: ");
 
-    
-    if(moment(question, "DD-MM-YYYY").isValid()){
+    if (moment(question, "DD-MM-YYYY", true).isValid()) {
       const result = moment(question, "DD-MM-YYYY").format("DD/MM/YYYY");
       console.log(result);
-    }else if(!moment(question, "DD-MM-YYYY").isValid()){
-      const error = new Error("wrong_format")
-      throw error
-    }else{
-      const error = new Error("not_valid")
-      throw error
+    } else {
+      const error = new Error("wrong_format");
+      throw error;
     }
-
-  }catch(err){
-    if(err.message === "wrong_format"){
+  } catch (err) {
+    if (err.message === "wrong_format") {
       console.log("tanggal yang dimasukkan salah format");
-    }
-    if(err.message === "not_valid"){
+    } else {
       console.log("input tidak valid");
     }
-  }
+  } 
+  rl.close();
 };
 
 
@@ -51,7 +46,7 @@ firstMenu();
 TANPA PACKAGE
 --------------------------------------------- */
 
-function firstMenuWithoutPackage() {
+const firstMenuWithoutPackage = async () => {
   console.log(`
     ========================================
     |   # Program konversi ke DD/MM/YYY #  |
@@ -59,17 +54,28 @@ function firstMenuWithoutPackage() {
     |        format harus DD-MM-YYY        |
     ========================================
   `);
-  rl.question("masukkan angka: ", function (input) {
-    const pisah = input.split("-"); 
-    // console.log(pisah);
-  
-    if(pisah.length <= 1 || typeof pisah.length !== "number" ){
-      console.log("Format Tanggal Anda Salah");
-    }else{
-      const result = pisah.join("/");
-      console.log(result);
-    }   
-  });
-}
+  try {
+    const input = await rl.question("masukkan angka: ");
+
+    const pisah = input.split("-");
+    if (pisah.length !== 3) {
+      throw new Error("not_valid");
+    }
+
+    const [tanggal, bulan, tahun] = pisah.map(Number);
+
+    if (tanggal < 1 || tanggal > 31 || bulan < 1 || bulan > 12 || tahun.toString().length !== 4) {
+      throw new Error("not_valid");
+    }
+    const result = pisah.join("/");
+    console.log(result);
+  } catch (err) {
+    if (err.message === "not_valid") {
+      console.log("input tidak valid");
+    }
+  } finally {
+    rl.close();
+  }
+};
 
 firstMenuWithoutPackage();
